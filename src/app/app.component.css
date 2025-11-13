@@ -7,7 +7,7 @@
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #bea13fab;
+    background-color:  rgba(79, 138, 192, 0.822);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -15,10 +15,20 @@ body {
     flex-direction: column;
 }
 
+/* vehicleDetails for the content */
+.vehicleDetails {
+    width: 70%;
+    height: 10%;
+    padding: 20px;
+    background-color: rgba(212, 224, 98, 0.39);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(192, 199, 218, 0.384);
+}
+
 /* Container for the content */
 .container {
     width: 70%;
-    height: 60%;
+    height: 30%;
     padding: 20px;
     background-color: rgba(63, 168, 107, 0.562);
     border-radius: 8px;
