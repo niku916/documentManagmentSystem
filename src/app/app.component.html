@@ -3,16 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document Managment Service</title>
-    <!-- <link rel="stylesheet" href="styles.css"> -->
+    <title>Document Management Service</title>
+    <link rel="stylesheet" href="app.component.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Welcome to DMS Page</h1>
+            <h1>Document Management Service</h1>
+            <p>Manage your documents efficiently</p>
         </header>
-        <p>Hello</p>
-        <button>Click Me</button>
+
+        <!-- Table for document management -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Document Type</th>
+                    <th>Document Name</th>
+                    <th>Select File</th>
+                    <th>Upload Document</th>
+                    <th>View Document</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>PDF</td>
+                    <td>Sample Document 1</td>
+                    <td><input type="file" /></td>
+                    <td><button>Upload</button></td>
+                    <td><button>View</button></td>
+                </tr>
+                <tr>
+                    <td>Word</td>
+                    <td>Sample Document 2</td>
+                    <td><input type="file" /></td>
+                    <td><button>Upload</button></td>
+                    <td><button>View</button></td>
+                </tr>
+                <tr>
+                    <td>Excel</td>
+                    <td>Sample Document 3</td>
+                    <td><input type="file" /></td>
+                    <td><button>Upload</button></td>
+                    <td><button>View</button></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </body>
 </html>
