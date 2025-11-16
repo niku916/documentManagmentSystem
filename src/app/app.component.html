@@ -1,60 +1,78 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document Management Service</title>
-    <link rel="stylesheet" href="app.component.css">
-</head>
-<body>
-    <header>
-        <h1>Document Management Service</h1>
-    </header>
+<!-- NIC-like header -->
+<div class="nic-header">
+  <div class="nic-title">Document Management System</div>
+  <div class="nic-sub">
+    <span>(Vehicle No: <strong>OD05Q7521</strong> , Application Number: <strong>OR251010V0272609</strong>, Purpose Description: <strong>[Change of Address in RC]</strong>)</span>
+  </div>
+</div>
 
-    <div class="vehicleDetails">
+<!-- main card -->
+<div class="card-wrap">
+  <div class="card-title">Upload Documents</div>
 
+  <div class="table-shell">
+    <table class="nic-table">
+      <thead>
+        <tr>
+          <th style="width:6%;">Sr.No.</th>
+          <th style="width:22%;">Document Type</th>
+          <th style="width:34%;">Document Name</th>
+          <th style="width:18%;">Select File</th>
+          <th style="width:10%;">Upload Document</th>
+          <th style="width:10%;">View Document</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let d of docs; let i = index">
+          <td>{{ i + 1 }}</td>
 
+          <td class="doc-type">
+            {{ d.catName }}
+            <span *ngIf="d.mandatory === 'Y'" class="mand">*</span>
+            <div class="muted small">{{ d.catId }}</div>
+          </td>
 
+          <td>
+            <select [(ngModel)]="d.selectedSubCat" class="nic-select" [disabled]="!d.subcategoryMasterDataList?.length">
+              <option *ngFor="let s of d.subcategoryMasterDataList" [value]="s.sub_cat_id">{{ s.sub_cat_name }}</option>
+            </select>
+          </td>
 
+          <td class="file-col">
+            <input type="file" (change)="onFileChange($event, d)" />
+          </td>
 
+          <td class="actions-col">
+            <button class="btn" (click)="upload(d)">Upload</button>
+            <button class="btn ghost" (click)="clear(d)">Clear</button>
+          </td>
 
-    </div>
-    <div class="container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Document Type</th>
-                    <th>Document Name</th>
-                    <th>Select File</th>
-                    <th>Upload Document</th>
-                    <th>View Document</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>PDF</td>
-                    <td>Sample Document 1</td>
-                    <td><input type="file" /></td>
-                    <td><button>Upload</button></td>
-                    <td><button>View</button></td>
-                </tr>
-                <tr>
-                    <td>Word</td>
-                    <td>Sample Document 2</td>
-                    <td><input type="file" /></td>
-                    <td><button>Upload</button></td>
-                    <td><button>View</button></td>
-                </tr>
-                <tr>
-                    <td>Excel</td>
-                    <td>Sample Document 3</td>
-                    <td><input type="file" /></td>
-                    <td><button>Upload</button></td>
-                    <td><button>View</button></td>
-                </tr>
-            </tbody>
-        </table>
-        <button type="submit"> Proceed</button>
-    </div>
-</body>
-</html>
+          <td>
+            <div class="status" [class.uploaded]="d.docUploaded" [class.pending]="!d.docUploaded">
+              {{ d.docUploaded ? (d.uploadedFileName || 'Uploaded') : (d.mandatory === 'Y' ? 'Required' : 'Not uploaded') }}
+            </div>
+            <div class="view">
+              <button class="link" (click)="view(d)">View</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="bottom-actions">
+    <button class="proceed" (click)="proceed()">Proceed Further</button>
+  </div>
+</div>
+
+<!-- NIC footer -->
+<footer class="nic-footer">
+  <div class="nic-footer-left">
+    <!-- replace src with your NIC image path if you have one -->
+    <img src="assets/nic-logo.png" alt="NIC Logo" onerror="this.style.display='none'"/>
+  </div>
+  <div class="nic-footer-center">
+    <div>vahan.parivahan.gov.in (Build Version: 090420251700)</div>
+  </div>
+  <div class="nic-footer-right"></div>
+</footer>

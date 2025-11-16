@@ -1,100 +1,78 @@
-/* Basic resets and body styling */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* Overall page background */
+:root{
+  --nic-blue:#0b6f82;
+  --nic-teal:#9fd9d0;
+  --card-bg:#f6fbff;
+  --table-head:#2f6f8a;
+  --accent:#1b9bd6;
+  --muted:#6b7280;
 }
 
-body {
-    font-family: Arial, sans-serif;
-    background-color:  rgba(79, 138, 192, 0.822);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    flex-direction: column;
+body,html{height:100%;margin:0;font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;background:#f0f6f8;color:#0b1220}
+
+/* Header like screenshot */
+.nic-header{
+  background: linear-gradient(180deg,#0e90a6 0%, #0a7b8b 50%, #0b6f82 100%);
+  color:white;
+  text-align:center;
+  padding:18px 10px;
+  box-shadow: 0 2px 0 rgba(0,0,0,0.05);
+}
+.nic-title{font-size:32px;font-weight:700;letter-spacing:1px}
+.nic-sub{background:#e6f7f2;color:#0a4b42;padding:8px;border-radius:6px;margin:10px auto 0;display:inline-block;font-size:13px;padding-left:16px;padding-right:16px;}
+
+/* Main card container */
+.card-wrap{max-width:1100px;margin:22px auto;padding:18px;background:linear-gradient(180deg,#ffffff,#fbfeff);border-radius:22px;border:6px solid rgba(11,111,130,0.08);box-shadow:0 8px 20px rgba(9,30,39,0.06)}
+.card-title{background:var(--table-head);color:white;padding:12px 18px;border-radius:14px;font-size:18px;text-align:center;margin-bottom:14px;box-shadow: inset 0 -3px 0 rgba(0,0,0,0.06)}
+
+/* Table shell to give rounded look */
+.table-shell{padding:8px;background:linear-gradient(180deg,#e9f5f7,#f7fbfd);border-radius:16px;border:1px solid rgba(12,84,96,0.05)}
+.nic-table{width:100%;border-collapse:collapse;font-size:14px}
+
+/* Head */
+.nic-table thead th{
+  background:linear-gradient(180deg,#3a8aa0,#2f6f8a);
+  color:#fff;padding:12px;border:1px solid rgba(0,0,0,0.06);text-align:left;font-weight:700;font-size:13px
 }
 
-/* vehicleDetails for the content */
-.vehicleDetails {
-    width: 70%;
-    height: 10%;
-    padding: 20px;
-    background-color: rgba(212, 224, 98, 0.39);
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(192, 199, 218, 0.384);
+/* Rows */
+.nic-table tbody tr td{
+  padding:12px;border-bottom:1px solid rgba(11,111,130,0.06);vertical-align:top;background:linear-gradient(180deg,#fff,#fbfeff)
 }
+.nic-table tbody tr:nth-child(odd) td{background:linear-gradient(180deg,#fbfdfe,#ffffff)}
 
-/* Container for the content */
-.container {
-    width: 70%;
-    height: 30%;
-    padding: 20px;
-    background-color: rgba(63, 168, 107, 0.562);
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(60, 85, 153, 0.384);
-}
+.doc-type .muted{font-size:12px;color:var(--muted);margin-top:6px}
+.small{font-size:12px;color:var(--muted)}
+.mand{color:#d43f3a;margin-left:6px;font-weight:700}
 
-/* Header styling */
-header h1 {
-    font-size: 2rem;
-    color: #333;
-    margin-bottom: 10px;
-}
+/* select & input style */
+.nic-select{width:100%;padding:6px;border-radius:4px;border:1px solid rgba(11,111,130,0.15);background:#fff}
+input[type="file"]{width:100%;padding:6px;border-radius:4px;border:1px solid rgba(11,111,130,0.06)}
 
-header p {
-    color: #666;
-    font-size: 1rem;
-}
+/* buttons */
+.btn{background:linear-gradient(180deg,#2d95c3,#0b6f98);color:#fff;padding:6px 10px;border-radius:10px;border:0;cursor:pointer;font-weight:600}
+.btn.ghost{background:#fff;border:1px solid rgba(11,111,130,0.12);color:var(--table-head)}
+.link{background:transparent;border:0;color:var(--accent);cursor:pointer;text-decoration:underline;font-size:13px;padding:0}
 
-/* Table styling */
-table {
-    width: 100%;
-    margin-top: 20px;
-    border-collapse: collapse;
-}
+/* status bubble */
+.status{display:inline-block;padding:6px 10px;border-radius:8px;font-size:13px}
+.status.uploaded{background:#e6fff1;color:#0b6f3b}
+.status.pending{background:#fff5eb;color:#a35400}
 
-th, td {
-    padding: 12px 15px;
-    text-align: center;
-    border: 1px solid #ddd;
-}
+/* bottom proceed button */
+.bottom-actions{margin-top:16px;text-align:left}
+.proceed{background:linear-gradient(180deg,#1b9bd6,#0b6f98);color:#fff;padding:10px 18px;border-radius:18px;border:0;font-weight:700;cursor:pointer}
 
-th {
-    background-color: #f4f4f4;
-    font-weight: bold;
-}
+/* footer */
+.nic-footer{height:84px;background:linear-gradient(180deg,#0c7180,#0a6673);color:#fff;display:flex;align-items:center;padding:10px 28px;border-top-left-radius:12px;border-top-right-radius:12px;margin-top:28px}
+.nic-footer-left img{height:48px}
+.nic-footer-center{flex:1;text-align:center;font-size:12px;color:rgba(255,255,255,0.9)}
 
-tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-tr:hover {
-    background-color: #f1f1f1;
-}
-
-/* Button styling */
-button {
-    padding: 8px 12px;
-    border: none;
-    background-color: #007bff;
-    color: white;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-}
-
-button:hover {
-    background-color: #3c638d8f;
-}
-
-input[type="file"] {
-    padding: 5px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-}
-
-/* Make sure input fields and buttons are aligned nicely */
-td input[type="file"], td button {
-    margin: 0 auto;
+/* responsive */
+@media (max-width:900px){
+  .card-wrap{margin:12px;padding:14px}
+  .nic-title{font-size:22px}
+  .nic-sub{display:block;padding:6px;font-size:12px}
+  .nic-table thead th{font-size:12px}
+  .doc-type .muted{display:none}
 }
