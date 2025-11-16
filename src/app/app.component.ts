@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { UploadService } from './upload.service';
 import { DocumentService } from './document.service';
 
@@ -7,7 +7,7 @@ import { DocumentService } from './document.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   step = 1;
   loading = false;
   progress = 0;
@@ -15,7 +15,6 @@ export class AppComponent {
   apiResponse: any = null;
   docs: any[] = [];
 
-  // fallback (used only if backend call fails or no token provided)
   private fallbackResponse: any = {
     response: {
       nonUploadedList: [],
@@ -31,42 +30,44 @@ export class AppComponent {
     private docService: DocumentService
   ) {}
 
-  ngOnInit() {
-    // 1) Read dmsRequest token from URL query string
+  ngOnInit(): void {
     const params = new URLSearchParams(window.location.search);
-    const token = params.get('dmsRequest') || params.get('dmsrequest');
+    let token = params.get('dmsRequest') || params.get('dmsrequest') || '';
 
     if (token) {
-      // token may be percent-encoded in the URL; pass as-is (server expects encoded)
-      console.log('Found dmsRequest in URL (raw):', token);
+      try {
+        if (token.includes('%25')) {
+          token = decodeURIComponent(token);
+        }
+        token = token.trim();
+      } catch (e) {
+        console.warn('Could not decode token', e);
+      }
       this.loadDocumentsByDmsRequest(token);
     } else {
-      // no token -> use fallback so UI still displays (dev)
       this.apiResponse = this.fallbackResponse;
       this.docs = this.mergeLists(this.apiResponse);
     }
   }
 
-  loadDocumentsByDmsRequest(dmsRequest: string) {
+  loadDocumentsByDmsRequest(dmsRequest: string): void {
     this.loading = true;
-    this.docService.getListOfDocument(dmsRequest).subscribe({
-      next: (res) => {
+    this.docService.postListOfDocument(dmsRequest).subscribe({
+      next: (res: any) => {
         this.loading = false;
         this.apiResponse = res;
         this.docs = this.mergeLists(this.apiResponse);
       },
-      error: (err) => {
+      error: (err: any) => {
         this.loading = false;
         console.error('Failed to fetch documents', err);
         alert('Failed to load documents. Check console and backend.');
-        // fallback so UI not blank
         this.apiResponse = this.fallbackResponse;
         this.docs = this.mergeLists(this.apiResponse);
       }
     });
   }
 
-  // merge and prepare UI state (same helper as earlier)
   mergeLists(resp: any): any[] {
     const seen = new Set<string>();
     const arr: any[] = [];
@@ -90,7 +91,7 @@ export class AppComponent {
     return arr;
   }
 
-  onFileSelected(event: Event, doc: any) {
+  onFileSelected(event: Event, doc: any): void {
     const input = event.target as HTMLInputElement;
     if (!input || !input.files || input.files.length === 0) {
       doc.fileObj = null;
@@ -99,7 +100,7 @@ export class AppComponent {
     doc.fileObj = input.files[0];
   }
 
-  upload(doc: any) {
+  upload(doc: any): void {
     if (!doc.fileObj) {
       alert('Please select a file to upload for: ' + (doc.catName || doc.catId));
       return;
@@ -123,14 +124,14 @@ export class AppComponent {
           setTimeout(() => (this.progress = 0), 400);
         }
       },
-      error: (err) => {
+      error: (err: any) => {
         this.loading = false;
         alert('Upload failed: ' + (err?.message || 'server error'));
       }
     });
   }
 
-  clear(doc: any, fileInput?: HTMLInputElement) {
+  clear(doc: any, fileInput?: HTMLInputElement): void {
     doc.fileObj = null;
     doc.uploadedFileName = null;
     doc.docUploaded = false;
@@ -138,7 +139,7 @@ export class AppComponent {
     if (fileInput) fileInput.value = '';
   }
 
-  view(doc: any) {
+  view(doc: any): void {
     if (doc.docUrl) {
       const w = window.open('', '_blank');
       w!.document.write(`<p style="font-family:system-ui;padding:20px">Viewing: <strong>${doc.uploadedFileName || doc.docUrl}</strong></p>`);
@@ -147,7 +148,7 @@ export class AppComponent {
     alert('No document available to view for ' + (doc.catName || doc.catId));
   }
 
-  proceed() {
+  proceed(): void {
     const missing = this.docs.filter(d => (d.mandatory === 'Y' || d.mandatory === 'y') && !d.docUploaded);
     if (missing.length) {
       alert('Please upload mandatory documents: ' + missing.map(m => m.catName || m.catId).join(', '));
@@ -156,7 +157,7 @@ export class AppComponent {
     this.step = 2;
   }
 
-  submitAll() {
+  submitAll(): void {
     const payload = this.docs.filter(d => d.docUploaded).map(d => ({
       catId: d.catId, subCatId: d.selectedSubCat, fileName: d.uploadedFileName, docUrl: d.docUrl
     }));

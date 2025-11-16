@@ -42,6 +42,8 @@
           </td>
           <td class="file-col">
             <!-- a template ref per-row; allowed inside ngFor -->
+             <!-- ng serve --proxy-config proxy.conf.json-->
+
             <input type="file" #fileInput (change)="onFileSelected($event,d)" style="display:none" />
             <button class="choose" (click)="fileInput.click()">+ Choose</button>
             <span class="filename">{{ d.fileObj?.name || '' }}</span>

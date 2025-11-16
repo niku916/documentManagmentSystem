@@ -5,7 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
-import { SpinnerComponent } from './spinner/spinner.component'; // <- correct path if you used ng g component spinner
+import { SpinnerComponent } from './spinner/spinner.component';
 
 @NgModule({
   declarations: [
