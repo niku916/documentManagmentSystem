@@ -1,18 +1,5 @@
 import { Component } from '@angular/core';
-
-type Subcategory = { cat_id: string; sub_cat_id: string; sub_cat_name: string };
-type DocItem = {
-  catId?: string;
-  catName?: string;
-  mandatory?: string;
-  subcategoryMasterDataList?: Subcategory[];
-  // UI state
-  fileObj?: File | null;
-  selectedSubCat?: string | null;
-  uploadedFileName?: string | null;
-  docUrl?: string | null;
-  docUploaded?: boolean;
-};
+import { UploadService } from './upload.service';
 
 @Component({
   selector: 'app-root',
@@ -20,189 +7,170 @@ type DocItem = {
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  // Simulated API response (use your JSON here)
+  step = 1;
+  loading = false;
+  progress = 0;
+
+  // Put your API JSON exactly here (I used the JSON you shared earlier)
   apiResponse: any = {
-    responseType: 'Success',
-    response: {
-      statusCode: 'V001',
-      uploadedList: [],
-      nonUploadedList: [
-        {
-          catId: 'AP',
-          catName: 'Address Proof',
-          mandatory: 'Y',
-          subcategoryMasterDataList: [
-            { cat_id: 'AP', sub_cat_id: '103', sub_cat_name: 'Aadhaar Card' },
-            { cat_id: 'AP', sub_cat_id: '1582', sub_cat_name: 'Bank Passbook Showing Address' },
-            { cat_id: 'AP', sub_cat_id: '1101', sub_cat_name: 'Govt ID card' },
-            { cat_id: 'AP', sub_cat_id: '1583', sub_cat_name: 'Indian Passport' },
-            { cat_id: 'AP', sub_cat_id: '1089', sub_cat_name: 'Payslip by Central or State Government or Local Body' },
-            { cat_id: 'AP', sub_cat_id: '105', sub_cat_name: 'Voter ID' }
+    "responseType":"Success",
+    "response":{
+      "documentList":null,
+      "allDocumentList":null,
+      "offCode":null,
+      "statusCode":"V001",
+      "jsecurityKey":null,
+      "jkey":null,
+      "uploadedList":[],
+      "nonUploadedList":[
+        {"catId":"AP","catName":"Address Proof","mandatory":"Y","docUploaded":false,
+          "subcategoryMasterDataList":[
+            {"cat_id":"AP","sub_cat_id":"103","sub_cat_name":"Aadhaar Card"},
+            {"cat_id":"AP","sub_cat_id":"1582","sub_cat_name":"Bank Passbook Showing Address"},
+            {"cat_id":"AP","sub_cat_id":"1101","sub_cat_name":"Govt ID card"},
+            {"cat_id":"AP","sub_cat_id":"1583","sub_cat_name":"Indian Passport"},
+            {"cat_id":"AP","sub_cat_id":"1089","sub_cat_name":"Payslip by Central or State Government or Local Body"},
+            {"cat_id":"AP","sub_cat_id":"105","sub_cat_name":"Voter ID"}
           ]
         },
-        {
-          catId: 'IP',
-          catName: 'Identity Proof',
-          mandatory: 'Y',
-          subcategoryMasterDataList: [
-            { cat_id: 'IP', sub_cat_id: '103', sub_cat_name: 'Aadhaar Card' },
-            { cat_id: 'IP', sub_cat_id: '1101', sub_cat_name: 'Govt ID card' },
-            { cat_id: 'IP', sub_cat_id: '1583', sub_cat_name: 'Indian Passport' },
-            { cat_id: 'IP', sub_cat_id: '151', sub_cat_name: 'PAN Card' },
-            { cat_id: 'IP', sub_cat_id: '105', sub_cat_name: 'Voter ID' }
+        {"catId":"IP","catName":"Identity Proof","mandatory":"Y","docUploaded":false,
+          "subcategoryMasterDataList":[
+            {"cat_id":"IP","sub_cat_id":"103","sub_cat_name":"Aadhaar Card"},
+            {"cat_id":"IP","sub_cat_id":"1101","sub_cat_name":"Govt ID card"},
+            {"cat_id":"IP","sub_cat_id":"1583","sub_cat_name":"Indian Passport"},
+            {"cat_id":"IP","sub_cat_id":"151","sub_cat_name":"PAN Card "},
+            {"cat_id":"IP","sub_cat_id":"105","sub_cat_name":"Voter ID"}
           ]
         },
-        {
-          catId: 'CP3',
-          catName: 'Chassis Print',
-          mandatory: 'N',
-          subcategoryMasterDataList: [{ cat_id: 'CP3', sub_cat_id: '1000', sub_cat_name: 'Chassis Print' }]
+        {"catId":"CP3","catName":"Chassis Print","mandatory":"N","docUploaded":false,
+          "subcategoryMasterDataList":[{"cat_id":"CP3","sub_cat_id":"1000","sub_cat_name":"Chassis Print"}]
         },
-        {
-          catId: 'F60',
-          catName: 'Form 60',
-          mandatory: 'N',
-          subcategoryMasterDataList: [{ cat_id: 'F60', sub_cat_id: '1977', sub_cat_name: 'Working Certificate In Form 60 Or Official Identity Card' }]
+        {"catId":"F60","catName":"Form 60","mandatory":"N","docUploaded":false,
+          "subcategoryMasterDataList":[{"cat_id":"F60","sub_cat_id":"1977","sub_cat_name":"Working Certificate In Form 60 Or Official Identity Card"}]
         },
-        {
-          catId: 'VPHOTO',
-          catName: 'Vehicle Photo',
-          mandatory: 'N',
-          subcategoryMasterDataList: [{ cat_id: 'VPHOTO', sub_cat_id: '2046', sub_cat_name: 'Vehicle Photograph' }]
+        {"catId":"VPHOTO","catName":"Vehicle Photo","mandatory":"N","docUploaded":false,
+          "subcategoryMasterDataList":[{"cat_id":"VPHOTO","sub_cat_id":"2046","sub_cat_name":"Vehicle Photograph"}]
         }
       ],
-      mandatoryList: [
-        // duplicating mandatoryList same as earlier JSON
-        {
-          catId: 'AP',
-          catName: 'Address Proof',
-          mandatory: 'Y',
-          subcategoryMasterDataList: [
-            { cat_id: 'AP', sub_cat_id: '103', sub_cat_name: 'Aadhaar Card' },
-            { cat_id: 'AP', sub_cat_id: '1582', sub_cat_name: 'Bank Passbook Showing Address' },
-            { cat_id: 'AP', sub_cat_id: '1101', sub_cat_name: 'Govt ID card' },
-            { cat_id: 'AP', sub_cat_id: '1583', sub_cat_name: 'Indian Passport' },
-            { cat_id: 'AP', sub_cat_id: '1089', sub_cat_name: 'Payslip by Central or State Government or Local Body' },
-            { cat_id: 'AP', sub_cat_id: '105', sub_cat_name: 'Voter ID' }
+      "mandatoryList":[
+        {"catId":"AP","catName":"Address Proof","mandatory":"Y","docUploaded":false,
+          "subcategoryMasterDataList":[
+            {"cat_id":"AP","sub_cat_id":"103","sub_cat_name":"Aadhaar Card"},
+            {"cat_id":"AP","sub_cat_id":"1582","sub_cat_name":"Bank Passbook Showing Address"},
+            {"cat_id":"AP","sub_cat_id":"1101","sub_cat_name":"Govt ID card"},
+            {"cat_id":"AP","sub_cat_id":"1583","sub_cat_name":"Indian Passport"},
+            {"cat_id":"AP","sub_cat_id":"1089","sub_cat_name":"Payslip by Central or State Government or Local Body"},
+            {"cat_id":"AP","sub_cat_id":"105","sub_cat_name":"Voter ID"}
           ]
         },
-        {
-          catId: 'IP',
-          catName: 'Identity Proof',
-          mandatory: 'Y',
-          subcategoryMasterDataList: [
-            { cat_id: 'IP', sub_cat_id: '103', sub_cat_name: 'Aadhaar Card' },
-            { cat_id: 'IP', sub_cat_id: '1101', sub_cat_name: 'Govt ID card' },
-            { cat_id: 'IP', sub_cat_id: '1583', sub_cat_name: 'Indian Passport' },
-            { cat_id: 'IP', sub_cat_id: '151', sub_cat_name: 'PAN Card' },
-            { cat_id: 'IP', sub_cat_id: '105', sub_cat_name: 'Voter ID' }
+        {"catId":"IP","catName":"Identity Proof","mandatory":"Y","docUploaded":false,
+          "subcategoryMasterDataList":[
+            {"cat_id":"IP","sub_cat_id":"103","sub_cat_name":"Aadhaar Card"},
+            {"cat_id":"IP","sub_cat_id":"1101","sub_cat_name":"Govt ID card"},
+            {"cat_id":"IP","sub_cat_id":"1583","sub_cat_name":"Indian Passport"},
+            {"cat_id":"IP","sub_cat_id":"151","sub_cat_name":"PAN Card "},
+            {"cat_id":"IP","sub_cat_id":"105","sub_cat_name":"Voter ID"}
           ]
         }
       ],
-      applno: 'OR251010V0272609',
-      purposeName: '[Change of Address in RC]',
-      status: null
+      "applno":"OR251010V0272609",
+      "purposeName":"[Change of Address in RC]",
+      "status":null
     },
-    responseCode: 'OK',
-    isError: false
+    "responseCode":"OK",
+    "isError":false
   };
 
-  docs: DocItem[] = [];
+  docs: any[] = [];
+
+  constructor(private uploadService: UploadService) {}
 
   ngOnInit() {
     this.docs = this.mergeLists(this.apiResponse);
   }
 
-  private mergeLists(resp: any): DocItem[] {
+  private mergeLists(resp: any) {
     const seen = new Set<string>();
-    const arr: DocItem[] = [];
+    const arr: any[] = [];
     const add = (item: any) => {
       const key = item.catId || item.cat_id || JSON.stringify(item);
       if (!seen.has(key)) {
-        const copy: DocItem = {
+        arr.push({
           ...item,
           fileObj: null,
-          selectedSubCat: item.subcategoryMasterDataList && item.subcategoryMasterDataList.length ? item.subcategoryMasterDataList[0].sub_cat_id : null,
+          selectedSubCat: item.subcategoryMasterDataList?.[0]?.sub_cat_id || null,
           uploadedFileName: null,
           docUrl: item.docUrl || null,
           docUploaded: !!item.docUploaded
-        };
-        arr.push(copy);
+        });
         seen.add(key);
       }
     };
-    const r = resp.response || {};
-    (r.mandatoryList || []).forEach(add);
-    (r.nonUploadedList || []).forEach(add);
+    (resp.response.mandatoryList || []).forEach(add);
+    (resp.response.nonUploadedList || []).forEach(add);
     return arr;
   }
 
-  onFileChange(event: Event, doc: DocItem) {
+  onFileSelected(event: Event, doc: any) {
     const input = event.target as HTMLInputElement;
-    if (!input.files || !input.files.length) {
-      doc.fileObj = null;
-      return;
-    }
-    doc.fileObj = input.files[0];
+    if (input.files && input.files.length) doc.fileObj = input.files[0];
   }
 
-  upload(doc: DocItem) {
+  chooseFile(doc: any, inputEl: HTMLInputElement) {
+    inputEl.click();
+  }
+
+  upload(doc: any) {
     if (!doc.fileObj) {
-      alert('Please select a file to upload for: ' + (doc.catName || doc.catId));
+      alert('Select a file first for ' + doc.catName);
       return;
     }
-    // simulate upload
-    doc.uploadedFileName = doc.fileObj.name;
-    doc.docUploaded = true;
-    doc.docUrl = 'blob:' + Math.random().toString(36).slice(2, 9);
-    alert('Uploaded: ' + doc.uploadedFileName + ' for ' + (doc.catName || doc.catId));
+    this.loading = true;
+    this.progress = 0;
+    this.uploadService.uploadFile(doc.fileObj, { catId: doc.catId, subCatId: doc.selectedSubCat, applNo: this.apiResponse.response.applno })
+      .subscribe((evt: any) => {
+        if (evt.type === 'progress') {
+          this.progress = evt.percent;
+        } else if (evt.type === 'response') {
+          this.loading = false;
+          doc.docUploaded = true;
+          doc.uploadedFileName = doc.fileObj.name;
+          doc.docUrl = evt.body?.docUrl || evt.body?.path || 'uploaded://' + doc.uploadedFileName;
+          alert('Upload successful: ' + doc.uploadedFileName);
+        }
+      }, (err: any) => {
+        this.loading = false;
+        alert('Upload failed: ' + (err.message || err.statusText || 'server error'));
+      });
   }
 
-  clear(doc: DocItem, inputEl?: HTMLInputElement) {
+  clear(doc: any, fileInput?: HTMLInputElement) {
     doc.fileObj = null;
     doc.uploadedFileName = null;
     doc.docUploaded = false;
     doc.docUrl = null;
-    if (inputEl) inputEl.value = '';
+    if (fileInput) fileInput.value = '';
   }
 
-  view(doc: DocItem) {
+  view(doc: any) {
     if (doc.docUrl) {
       const w = window.open('', '_blank');
-      w!.document.write(`<p style="font-family:system-ui;padding:20px">Viewing (simulated): <strong>${doc.uploadedFileName || doc.docUrl}</strong></p>`);
-      w!.document.title = 'View Document';
-    } else {
-      alert('No document available to view for ' + (doc.catName || doc.catId));
+      w!.document.write(`<p style="font-family:system-ui;padding:20px">Viewing: <strong>${doc.uploadedFileName || doc.docUrl}</strong></p>`);
+      return;
     }
+    alert('No document to view');
   }
 
   proceed() {
     const missing = this.docs.filter(d => d.mandatory === 'Y' && !d.docUploaded);
     if (missing.length) {
-      const names = missing.map(m => m.catName || m.catId).join(', ');
-      alert('Please upload mandatory documents: ' + names);
+      alert('Please upload mandatory docs: ' + missing.map(m => m.catName || m.catId).join(', '));
       return;
     }
-    const uploaded = this.docs.filter(d => d.docUploaded).map(d => ({
-      catId: d.catId,
-      catName: d.catName,
-      subCat: (d.subcategoryMasterDataList || []).find(s => s.sub_cat_id === d.selectedSubCat)?.sub_cat_name || '',
-      fileName: d.uploadedFileName || '—'
-    }));
-    if (!uploaded.length) {
-      alert('No documents uploaded yet.');
-      return;
-    }
-    let msg = 'Uploaded documents summary:\n\n';
-    uploaded.forEach(u => {
-      msg += `• ${u.catName} (${u.catId}) — ${u.subCat || 'subcat N/A'} — ${u.fileName}\n`;
-    });
-    alert(msg);
-    // In a real app: send uploaded data to backend here
+    this.step = 2;
   }
 
-  resetAll() {
-    if (!confirm('Reset all uploaded files and selections?')) return;
-    this.docs.forEach(d => this.clear(d));
+  submitAll() {
+    alert('All documents submitted. (Simulation)');
   }
 }

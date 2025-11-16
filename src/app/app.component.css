@@ -68,11 +68,17 @@ input[type="file"]{width:100%;padding:6px;border-radius:4px;border:1px solid rgb
 .nic-footer-left img{height:48px}
 .nic-footer-center{flex:1;text-align:center;font-size:12px;color:rgba(255,255,255,0.9)}
 
+/* button hover & transitions */
+.btn, .choose, .proceed { transition: transform 120ms ease, box-shadow 120ms ease; }
+.btn:hover, .choose:hover, .proceed:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(11,111,130,0.12); }
+
+/* sharper borders */
+.nic-table td, .nic-table th { border:1px solid rgba(10,80,90,0.08) !important; }
+
 /* responsive */
-@media (max-width:900px){
-  .card-wrap{margin:12px;padding:14px}
-  .nic-title{font-size:22px}
-  .nic-sub{display:block;padding:6px;font-size:12px}
-  .nic-table thead th{font-size:12px}
-  .doc-type .muted{display:none}
+@media (max-width:720px) {
+  .nic-table thead { display:none; }
+  .nic-table tbody tr { display:block; margin-bottom:12px; border-radius:10px; overflow:hidden; }
+  .nic-table tbody tr td { display:flex; justify-content:space-between; padding:8px 12px; }
+  .file-col .filename { display:block; margin-left:8px; font-size:13px; color:#2f6f8a; }
 }

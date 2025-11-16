@@ -1,16 +1,21 @@
-<!-- NIC-like header -->
+<app-spinner [show]="loading" [text]="'Uploading: ' + progress + '%'"></app-spinner>
+
 <div class="nic-header">
   <div class="nic-title">Document Management System</div>
   <div class="nic-sub">
-    <span>(Vehicle No: <strong>OD05Q7521</strong> , Application Number: <strong>OR251010V0272609</strong>, Purpose Description: <strong>[Change of Address in RC]</strong>)</span>
+    <span>(Vehicle No: <strong>OD05Q7521</strong> , Application Number: <strong>{{ apiResponse?.response?.applno }}</strong>, Purpose: <strong>{{ apiResponse?.response?.purposeName }}</strong>)</span>
   </div>
 </div>
 
-<!-- main card -->
 <div class="card-wrap">
   <div class="card-title">Upload Documents</div>
 
-  <div class="table-shell">
+  <div class="stepper">
+    <div [class.active]="step===1">1. Upload Documents</div>
+    <div [class.active]="step===2">2. Review & Submit</div>
+  </div>
+
+  <div class="table-shell" *ngIf="step===1">
     <table class="nic-table">
       <thead>
         <tr>
@@ -24,55 +29,58 @@
       </thead>
       <tbody>
         <tr *ngFor="let d of docs; let i = index">
-          <td>{{ i + 1 }}</td>
-
+          <td class="sr">{{ i + 1 }}</td>
           <td class="doc-type">
             {{ d.catName }}
             <span *ngIf="d.mandatory === 'Y'" class="mand">*</span>
             <div class="muted small">{{ d.catId }}</div>
           </td>
-
           <td>
             <select [(ngModel)]="d.selectedSubCat" class="nic-select" [disabled]="!d.subcategoryMasterDataList?.length">
               <option *ngFor="let s of d.subcategoryMasterDataList" [value]="s.sub_cat_id">{{ s.sub_cat_name }}</option>
             </select>
           </td>
-
           <td class="file-col">
-            <input type="file" (change)="onFileChange($event, d)" />
+            <!-- a template ref per-row; allowed inside ngFor -->
+            <input type="file" #fileInput (change)="onFileSelected($event,d)" style="display:none" />
+            <button class="choose" (click)="fileInput.click()">+ Choose</button>
+            <span class="filename">{{ d.fileObj?.name || '' }}</span>
           </td>
-
           <td class="actions-col">
             <button class="btn" (click)="upload(d)">Upload</button>
-            <button class="btn ghost" (click)="clear(d)">Clear</button>
+            <button class="btn ghost" (click)="clear(d, fileInput)">Clear</button>
           </td>
-
           <td>
             <div class="status" [class.uploaded]="d.docUploaded" [class.pending]="!d.docUploaded">
               {{ d.docUploaded ? (d.uploadedFileName || 'Uploaded') : (d.mandatory === 'Y' ? 'Required' : 'Not uploaded') }}
             </div>
-            <div class="view">
-              <button class="link" (click)="view(d)">View</button>
-            </div>
+            <div class="view"><button class="link" (click)="view(d)">View</button></div>
           </td>
         </tr>
       </tbody>
     </table>
+
+    <div class="bottom-actions">
+      <button class="proceed" (click)="proceed()">Proceed Further</button>
+    </div>
   </div>
 
-  <div class="bottom-actions">
-    <button class="proceed" (click)="proceed()">Proceed Further</button>
+  <div *ngIf="step===2" class="review">
+    <h3>Review uploaded documents</h3>
+    <ul>
+      <li *ngFor="let d of docs">
+        {{ d.catName }} — {{ d.uploadedFileName || 'No file' }}
+      </li>
+    </ul>
+    <div class="actions">
+      <button class="proceed" (click)="submitAll()">Submit All</button>
+      <button class="btn ghost" (click)="step=1">Back</button>
+    </div>
   </div>
 </div>
 
-<!-- NIC footer -->
 <footer class="nic-footer">
-  <div class="nic-footer-left">
-    <!-- replace src with your NIC image path if you have one -->
-    <img src="assets/nic-logo.png" alt="NIC Logo" onerror="this.style.display='none'"/>
-  </div>
-  <div class="nic-footer-center">
-    <div>vahan.parivahan.gov.in (Build Version: 090420251700)</div>
-  </div>
+  <div class="nic-footer-left"><img src="assets/nic-logo.png" alt="NIC" onerror="this.style.display='none'"/></div>
+  <div class="nic-footer-center">vahan.parivahan.gov.in (Build Version)</div>
   <div class="nic-footer-right"></div>
 </footer>
