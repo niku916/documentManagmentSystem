@@ -20,6 +20,6 @@ export class DocumentService {
     }
 
     const params = new HttpParams().set('dmsRequest', tokenToSend);
-    return this.http.post<any>(`${this.base}/getListOfDocument`, null, { params });
+    return this.http.post<any>(`http://localhost:8181/api/getListOfDocument`, null, { params });
   }
 }

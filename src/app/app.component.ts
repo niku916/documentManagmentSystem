@@ -31,6 +31,7 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    debugger
     const params = new URLSearchParams(window.location.search);
     let token = params.get('dmsRequest') || params.get('dmsrequest') || '';
 
